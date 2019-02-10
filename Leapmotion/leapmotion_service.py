@@ -22,100 +22,69 @@ class EventListener(Leap.Listener):
 
         global positions
 
+        """
+        :param controller:
+        :return [veloc_x, veloc_y]:
+        """
+
         frame = controller.frame()
 
-        THRESHOLD_X = 7.0
-        THRESHOLD_Y = 7.0
+        THRESHOLD_X  = 450.0
+        NORTH_THRESH = -500.0
+        SOUTH_THRESH = 800.0
 
         for current_hand in frame.hands:
 
             hand_speed = current_hand.palm_velocity
             hand_pos   = current_hand.stabilized_palm_position
-            positions.append([hand_speed.x, hand_speed.z, hand_pos.x, hand_pos.z, hand_pos.y])
+            positions.append([hand_speed.x, hand_speed.z, hand_speed.y])
 
             break
 
         else:
+            
             if len(positions) < 2:
                 return
 
-            # Send info to Arduino here
-
             def get_average(arr):
-                return float(sum(arr)) / len(arr)
-
-            def get_diff(arr, is_horizontal = False):
-
-                # Given Bitonic Array Get Half
-
-                direction = arr[1] >= arr[0]
-                left = 1
-
-                while left < len(arr) and (arr[left] >= arr[left - 1]) == direction:
-                    left += 1
-
-                return [arr[i] - arr[i - 1] for i in range(1, left)]
-
-            def check_action(arr):
-                # Compare Z positions
-
-                BUFFER = len(arr) >> 1
-                TOLERANCE = 50.0
-
-                s = 0
-
-                for i in arr[:BUFFER]:
-                    for j in arr[-BUFFER:]:
-                        if i - j > TOLERANCE:
-                            s += 1
-                        elif i - j < -TOLERANCE:
-                            s -= 1
-
-                if s > int(BUFFER**2 * 0.8):
-                    return 1
-
-                elif s < -int(BUFFER**2 * 0.8):
-                    return -1
-
-                return 0
-
-
-
+                middle = len(arr) >> 1
+                return float(sum(arr[:middle])) / len(arr[:middle])
 
             positions = list(zip(*positions))
 
             avg_vx = get_average(positions[0])
             avg_vy = get_average(positions[1])
-            avg_x  = get_average(get_diff(positions[2]))
-            action  = check_action(positions[3])
+            avg_vz = get_average(positions[2])
+            
+
             positions = []
 
             direction = ""
-            if avg_x > THRESHOLD_X:
-                if action == 1:
+            if avg_vx > THRESHOLD_X:
+                if avg_vz < NORTH_THRESH - 100.0:
                     # North East
                     direction = "NE"
-                elif action == -1:
+                elif avg_vz > SOUTH_THRESH - 100.0:
                     # South East
                     direction = "SE"
                 else:
                     # East
                     direction = "E"
-            elif avg_x < -THRESHOLD_X:
-                if action == 1:
+            elif avg_vx < -THRESHOLD_X:
+                if avg_vz < NORTH_THRESH - 100.0:
                     # North West
                     direction = "NW"
-                elif action == -1:
+                elif avg_vz > SOUTH_THRESH - 100.0:
                     # South West
                     direction = "SW"
                 else:
                     # West
                     direction = "W"
             else:
-                if action == 1:
+                if avg_vz < NORTH_THRESH:
                     # North
                     direction = "N"
-                elif action == -1:
+                elif avg_vz > SOUTH_THRESH:
                     # South
                     direction = "S"
 
@@ -124,11 +93,15 @@ class EventListener(Leap.Listener):
     def send_data(self, direction, veloc_x, veloc_y):
 
         # Use this to send data
-        print "sent"
-        
+        print direction
+
         return
 
 def main():
+
+    # START
+
+
 
     # Create a sample listener and controller
     listener = EventListener()

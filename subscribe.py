@@ -3,8 +3,11 @@ import ssl
 
 
 def onConnect(client, userdata, flags, rc):
-	print('subscribing to topic: ')
-	client.subscribe("testing/client")
+	print('connected, subscribing...')
+	client.on_subscribe('leapmotion/motion_raw')
+	client.on_subscribe('leapmotion/stop_raw')
+	client.on_subscribe('leapmotion/interrupt_clear_raw')
+
 
 def onDisconnect(client, userdata, rc):
 	print('disconnected!')
@@ -12,6 +15,14 @@ def onDisconnect(client, userdata, rc):
 def onMessage(client, userdata, message):
 	print('got message: ' + str(message.payload))
 
+	if (str(message.topicName) == 'leapmotion/motion_raw'):
+
+	elif str(message.topicName) == 'leapmotion/stop_raw'):
+	
+	elif str(message.topicName) == 'leapmotion/interrupt_clear_raw'):
+
+
+def onSubscribe(topic_name)
 
 connections='./solace.cloud'
 connection_args = {}

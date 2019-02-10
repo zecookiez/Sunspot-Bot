@@ -4,9 +4,10 @@ import ssl
 
 def onConnect(client, userdata, flags, rc):
 	print('subscribing to topic: ')
-	client.subscribe("testing/client")
-	print('publishing')
-	client.publish(subscribe_topic, msg)
+
+def onPublish(body):
+	print('publishing...')
+	client.publish("testing/client", body)
 
 def onDisconnect(client, userdata, rc):
 	print('disconnected!')
@@ -28,6 +29,10 @@ client.tls_set(ca_certs=None, certfile=None, keyfile=None, cert_reqs=ssl.CERT_RE
 client.on_connect = onConnect
 client.on_disconnect = onDisconnect
 client.on_message = onMessage
+
+for i in range(0,10):
+	client.on_message = onMessage
+	client.on_publish = onPublish("test"+str(i))
 
 client.username_pw_set(connection_args['username'], password=connection_args['password'])
 client.connect(connection_args['url'], int(connection_args['port']), 20)

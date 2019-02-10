@@ -226,7 +226,7 @@ void loop(void)
     Serial.println("RESUME");
   }
   //Read and send light data
-  i += (i + 1) % 500;
+  i = (i + 1) % 5000;
   if(i == 0)
   {
     lightLevel = light.read();

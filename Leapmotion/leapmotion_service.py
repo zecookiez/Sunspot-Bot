@@ -1,4 +1,6 @@
 import os, sys, inspect, thread, time
+import paho.mqtt.client as mqtt
+import ssl
 
 PATH = os.path.dirname(os.path.realpath(__file__)) + "/LeapSDK/lib"
 sys.path.insert(0, PATH)
@@ -90,14 +92,38 @@ class EventListener(Leap.Listener):
 
             self.send_data(direction, avg_vx, avg_vy)
 
+    def onConnect(client, userdata, flags, rc):
+        print ("connected.")
+
+    def onPublish(body):
+        print('publishing...')
+        client.publish("testing/client", body)
+
+    def onDisconnect(client, userdata, rc):
+        print('disconnected!')
+
+    def onMessage(client, userdata, message):
+        print('got message: ' + str(message.payload))
+
     def send_data(self, direction, veloc_x, veloc_y):
-
         # send pub to sunspotbot
+        client = mqtt.Client(transport="websockets")
+        client.tls_set(ca_certs=None, certfile=None, keyfile=None, cert_reqs=ssl.CERT_REQUIRED, tls_version=ssl.PROTOCOL_TLS, ciphers=None)
+        client.on_connect = onConnect
+        client.on_disconnect = onDisconnect
+        
+        connections='./solace.cloud'
+        connection_args = {}
+        with open(connections, "r") as f:
+            for line in f:
+                (key, val) = line.strip().split('=')
+                connection_args[key] = val
 
+        client.username_pw_set(connection_args['username'], password=connection_args['password'])
+        client.connect(connection_args['url'], int(connection_args
         # Use this to send data
-        print direction
-
-        return
+        direction = direction + " "
+        client.on_publish("leapmotion/direction", direction);
 
 def main():
 

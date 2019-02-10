@@ -33,7 +33,9 @@ client.tls_set(ca_certs=None, certfile=None, keyfile=None, cert_reqs=ssl.CERT_RE
 
 
 #if leapmotion
-message_content = leapmotion.get_motion()
+#recieve pub from leapmotion
+
+message_content = leapmotion_service.get_motion()
 client.on_connect = onLeapmotion
 client.on_disconnect = onDisconnect
 client.on_message = onMessage

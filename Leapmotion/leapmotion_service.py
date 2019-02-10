@@ -117,13 +117,15 @@ class EventListener(Leap.Listener):
         print('got message: ' + str(message.payload))
 
     def send_data(self, direction, veloc_x, veloc_y):
+
         # send pub to sunspotbot
         client = mqtt.Client(transport="websockets")
         client.tls_set(ca_certs=None, certfile=None, keyfile=None, cert_reqs=ssl.CERT_REQUIRED, tls_version=ssl.PROTOCOL_TLS, ciphers=None)
         client.on_connect = self.onConnect
         client.on_disconnect = self.onDisconnect
-        
-        connections='../solace.cloud'
+
+        cwd = os.getcwd()
+        connections='C:/Users/Zeyu/Desktop/Sunspot-Bot/solace.cloud'
         connection_args = {}
         with open(connections, "r") as f:
             for line in f:

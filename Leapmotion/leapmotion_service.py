@@ -66,7 +66,7 @@ class EventListener(Leap.Listener):
 
             positions = []
 
-            direction = ""
+            direction = "STOP"
             if avg_vx > THRESHOLD_X:
                 if avg_vz < NORTH_THRESH - 100.0:
                     # North East

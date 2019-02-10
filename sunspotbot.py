@@ -20,12 +20,14 @@ def onLeapmotion(topic_name, message_content):
 def onMessage(client, userdata, message):
 	print('got message: ' + str(message.payload))
 
+	if (str(message.topicName) == 'webcam/'):
+
 	if (str(message.topicName) == 'leapmotion/motion'):
 		client.on_connect = onLeapmotion('leapmotion/motion_raw', str(message.payload))
 		client.on_disconnect = onDisconnect
-	elif str(message.topicName) == 'leapmotion/stop'): #from leap, TODO
+	elif (str(message.topicName) == 'leapmotion/stop'): #from leap, TODO
 		client.on_connect = onLeapmotion('leapmotion/stop_raw', "STOP ")
-	elif str(message.topicName) == 'leapmotion/interrupt_clear'): #from webapp, TODO
+	elif (str(message.topicName) == 'leapmotion/interrupt_clear'): #from webapp, TODO
 		client.on_connect = onLeapmotion('leapmotion/interrupt_clear_raw', "OVERRIDE ")
 
 
@@ -50,7 +52,6 @@ client.loop_forever()
 
 
 #if webapp
-
 
 #if pi webcam
 

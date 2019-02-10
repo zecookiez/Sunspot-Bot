@@ -18,8 +18,9 @@ def onMessage(client, userdata, message):
 	if (str(message.topicName) == 'leapmotion/motion_raw'):
 
 	elif str(message.topicName) == 'leapmotion/stop_raw'):
-	
+
 	elif str(message.topicName) == 'leapmotion/interrupt_clear_raw'):
+
 
 
 def onSubscribe(topic_name)
@@ -39,4 +40,6 @@ client.username_pw_set(connection_args['username'], password=connection_args['pa
 client.connect(connection_args['url'], int(connection_args['port']), 20)
 
 client.loop_forever()
+
+
 

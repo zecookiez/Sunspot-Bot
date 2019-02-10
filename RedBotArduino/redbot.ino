@@ -15,6 +15,8 @@ RedBotMotors motors;
 RedBotEncoder encoders = RedBotEncoder(A2, 10);
 RedBotBumper bumperL = RedBotBumper(3);
 RedBotBumper bumperR = RedBotBumper(11);
+RedBotSensor light = RedBotSensor(A0);
+
 
 int leftPower;  // variable for setting the drive power
 int rightPower;
@@ -30,6 +32,9 @@ bool lBump = false;
 bool rBump = false;
 bool collision = false;
 bool takeover = false;
+int lightLevel = 0;
+int i = 0;
+
 
 void setup(void)
 {
@@ -66,12 +71,12 @@ void loop(void)
     encoders.clearEnc(BOTH);
   }
   //Update movement
-  Serial.print("Movetype: ");
-  Serial.println(moveType);
-  Serial.print("LPower: ");
-  Serial.println(leftPower);
-  Serial.print("RPower: ");
-  Serial.println(rightPower);
+  //Serial.print("Movetype: ");
+  //Serial.println(moveType);
+  //Serial.print("LPower: ");
+  //Serial.println(leftPower);
+  //Serial.print("RPower: ");
+  //Serial.println(rightPower);
   motors.leftMotor(leftPower);
   motors.rightMotor(rightPower);
   
@@ -81,7 +86,7 @@ void loop(void)
     //Serial.println("Event!");
     data = Serial.readStringUntil(' ');
     data.trim();
-    Serial.println(data);
+    //Serial.println(data);
     if(data == "N")
     {
       moveType = FORWARDS;
@@ -137,7 +142,7 @@ void loop(void)
     //Set initial values for motor power, positive is forwards and negative is backwards
     if(moveType != NONE and moveType != STOP)
     {
-      Serial.println("getting vel!");
+      //Serial.println("getting vel!");
       xVel = Serial.parseInt();
       yVel = Serial.parseInt();
       Serial.read(); 
@@ -190,7 +195,7 @@ void loop(void)
     }
     if(collision and !takeover)
     {
-      Serial.println("Frozen");
+      //Serial.println("Frozen");
       moveType = STOP;
       leftPower = 0;
       rightPower = 0;
@@ -204,7 +209,7 @@ void loop(void)
   //Serial.println(rBump);
   if ((lBump or rBump) and !takeover)
   {
-    Serial.println("boop");
+    //Serial.println("boop");
     collision = true;
     moveType = 0;
     leftPower = rightPower = 0;
@@ -219,6 +224,13 @@ void loop(void)
     collision = false;
     takeover = false;
     Serial.println("RESUME");
+  }
+  //Read and send light data
+  i = (i + 1) % 5000;
+  if(i == 0)
+  {
+    lightLevel = light.read();
+    Serial.println(lightLevel);
   }
 }
 

@@ -26,7 +26,7 @@ class EventListener(Leap.Listener):
 
         """
         :param controller:
-        :return [veloc_x, veloc_y]:
+        :return [direction, veloc_x, veloc_y]:
         """
 
         frame = controller.frame()
@@ -35,7 +35,6 @@ class EventListener(Leap.Listener):
         THRESHOLD_X = 200
         NORTH_THRESH = -200
         SOUTH_THRESH = 200"""
-        
 
         THRESHOLD_X  = 300.0
         NORTH_THRESH = -200.0
@@ -110,9 +109,6 @@ class EventListener(Leap.Listener):
     def onConnect(client, userdata, flags, rc):
         print ("connected.")
 
-    def onPublish(body):
-        print('publishing...')
-        client.publish("testing/client", body)
 
     def onDisconnect(client, userdata, rc):
         print('disconnected!')
@@ -124,10 +120,10 @@ class EventListener(Leap.Listener):
         # send pub to sunspotbot
         client = mqtt.Client(transport="websockets")
         client.tls_set(ca_certs=None, certfile=None, keyfile=None, cert_reqs=ssl.CERT_REQUIRED, tls_version=ssl.PROTOCOL_TLS, ciphers=None)
-        client.on_connect = onConnect
-        client.on_disconnect = onDisconnect
+        client.on_connect = self.onConnect
+        client.on_disconnect = self.onDisconnect
         
-        connections='./solace.cloud'
+        connections='../solace.cloud'
         connection_args = {}
         with open(connections, "r") as f:
             for line in f:
@@ -138,11 +134,9 @@ class EventListener(Leap.Listener):
         client.connect(connection_args['url'], int(connection_args['port']), 20)
         
         message = direction + " " + str(min(max(veloc_x, 90), 255)) + " " + str(min(max(veloc_y, 90), 255))
-        client.on_publish("leapmotion/motion", message)
+        client.publish("leapmotion/motion", message)
 
 def main():
-
-    # START
     
     # Create a sample listener and controller
     listener = EventListener()

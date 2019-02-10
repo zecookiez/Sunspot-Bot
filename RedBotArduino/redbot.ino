@@ -33,6 +33,8 @@ bool rBump = false;
 bool collision = false;
 bool takeover = false;
 int lightLevel = 0;
+int i = 0;
+
 
 void setup(void)
 {
@@ -224,8 +226,12 @@ void loop(void)
     Serial.println("RESUME");
   }
   //Read and send light data
-  lightLevel = light.read();
-  Serial.println(lightLevel);
+  i += (i + 1) % 500;
+  if(i == 0)
+  {
+    lightLevel = light.read();
+    Serial.println(lightLevel);
+  }
 }
 
 void serialEvent() {

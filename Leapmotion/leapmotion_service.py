@@ -92,6 +92,8 @@ class EventListener(Leap.Listener):
 
     def send_data(self, direction, veloc_x, veloc_y):
 
+        # send pub to sunspotbot
+
         # Use this to send data
         print direction
 
@@ -100,8 +102,6 @@ class EventListener(Leap.Listener):
 def main():
 
     # START
-
-
 
     # Create a sample listener and controller
     listener = EventListener()

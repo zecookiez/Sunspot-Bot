@@ -5,8 +5,8 @@ import ssl
 def onConnect(client, userdata, flags, rc):
 	print('subscribing to topic: ')
 	client.subscribe("testing/client")
-	print('publishing')
-	client.publish(subscribe_topic, msg)
+	print('publishing...')
+	client.publish("testing/client", "test message")
 
 def onDisconnect(client, userdata, rc):
 	print('disconnected!')

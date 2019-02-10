@@ -3,7 +3,7 @@ import ssl
 
 
 def onConnect(client, userdata, flags, rc):
-	print('subscribing to topic: ')
+	print ("connected.")
 
 def onPublish(body):
 	print('publishing...')
@@ -23,19 +23,23 @@ with open(connections, "r") as f:
         (key, val) = line.strip().split('=')
         connection_args[key] = val
 
-
 client = mqtt.Client(transport="websockets")
 client.tls_set(ca_certs=None, certfile=None, keyfile=None, cert_reqs=ssl.CERT_REQUIRED, tls_version=ssl.PROTOCOL_TLS, ciphers=None)
 client.on_connect = onConnect
 client.on_disconnect = onDisconnect
 client.on_message = onMessage
 
-for i in range(0,10):
-	client.on_message = onMessage
-	client.on_publish = onPublish("test"+str(i))
-
 client.username_pw_set(connection_args['username'], password=connection_args['password'])
 client.connect(connection_args['url'], int(connection_args['port']), 20)
+
+
+# for i in range(0,10):
+client.on_publish = onPublish("test")
+client.on_publish = onPublish("test1")
+client.on_publish = onPublish("test2")
+client.on_publish = onPublish("test3")
+# 	client.on_message = onMessage
+
 
 client.loop_forever()
 

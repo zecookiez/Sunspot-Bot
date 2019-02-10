@@ -133,8 +133,9 @@ class EventListener(Leap.Listener):
         client.username_pw_set(connection_args['username'], password=connection_args['password'])
         client.connect(connection_args['url'], int(connection_args['port']), 20)
         
-        message = direction + " " + str(min(max(veloc_x, 90), 255)) + " " + str(min(max(veloc_y, 90), 255))
-        client.publish("leapmotion/motion", message)
+        if direction: 
+            message = direction + " " + str(min(max(veloc_x, 90), 255)) + " " + str(min(max(veloc_y, 90), 255))
+            client.publish("leapmotion/motion", message)
 
 def main():
     

@@ -14,7 +14,6 @@ def onPublish(message):
 def onDisconnect(client, userdata, rc):
 	print('disconnected!')
 
-
 client = mqtt.Client(transport="websockets")
 client.tls_set(ca_certs=None, certfile=None, keyfile=None, cert_reqs=ssl.CERT_REQUIRED, tls_version=ssl.PROTOCOL_TLS, ciphers=None)
 
@@ -31,17 +30,16 @@ client.on_connect = onConnect
 client.on_disconnect = onDisconnect
 
 cap = cv2.VideoCapture(0)
-
 array = []
+delay = 0
 
 while(True):
-	# for i in range(0,30):
 	trash, frame = cap.read()
-		# array.append(frame)
+
 	client.on_publish = onPublish(str(frame))
-	# array = []
 	if cv2.waitKey(1) & 0xFF == ord('q'):
 		break
+
 
 cap.release()
 cv2.destroyAllWindows()

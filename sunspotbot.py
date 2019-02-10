@@ -1,13 +1,12 @@
 import paho.mqtt.client as mqtt
-import solace_client
 
-import leapmotion_service
+from Leapmotion import leapmotion_service
 
+def onConnect(client, userdata, flags, rc):
+	print('subscribing')
 
 def onLeapmotion(self, message_content):
-	client = mqtt.Client(transport="websockets")
-	client.tls_set(ca_certs=None, certfile=None, keyfile=None, cert_reqs=ssl.CERT_REQUIRED, tls_version=ssl.PROTOCOL_TLS, ciphers=None)
-	client.on_connect = solace_client.onConnect
+	client.on_connect = onConnect
 	client.subscribe('leapmotion/')
 	client.publish('leapmotion/', message_content)
 
@@ -21,7 +20,14 @@ def onDisconnect(client, userdata, rc):
 def onMessage(client, userdata, message):
 	print('got message: ' + str(message.payload))
 
-solace_client.init()
+
+connections='./solace.cloud'
+connection_args = {}
+with open(connections, "r") as f:
+    for line in f:
+        (key, val) = line.strip().split('=')
+        connection_args[key] = val
+
 client = mqtt.Client(transport="websockets")
 client.tls_set(ca_certs=None, certfile=None, keyfile=None, cert_reqs=ssl.CERT_REQUIRED, tls_version=ssl.PROTOCOL_TLS, ciphers=None)
 
@@ -31,6 +37,7 @@ message_content = leapmotion.get_motion()
 client.on_connect = onLeapmotion
 client.on_disconnect = onDisconnect
 client.on_message = onMessage
+
 
 
 #if webapp

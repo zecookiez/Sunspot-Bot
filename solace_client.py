@@ -14,26 +14,20 @@ def onDisconnect(client, userdata, rc):
 def onMessage(client, userdata, message):
 	print('got message: ' + str(message.payload))
 
-def init():
-	connections='./solace.cloud'
-	connection_args = {}
-	with open(connections, "r") as f:
-	    for line in f:
-	        (key, val) = line.strip().split('=')
-	        connection_args[key] = val
 
-def connect
+connections='./solace.cloud'
+connection_args = {}
+with open(connections, "r") as f:
+    for line in f:
+        (key, val) = line.strip().split('=')
+        connection_args[key] = val
 
-init();
 
 client = mqtt.Client(transport="websockets")
 client.tls_set(ca_certs=None, certfile=None, keyfile=None, cert_reqs=ssl.CERT_REQUIRED, tls_version=ssl.PROTOCOL_TLS, ciphers=None)
 client.on_connect = onConnect
 client.on_disconnect = onDisconnect
 client.on_message = onMessage
-
-print(connection_args['url'])
-print(connection_args['port'])
 
 client.username_pw_set(connection_args['username'], password=connection_args['password'])
 client.connect(connection_args['url'], int(connection_args['port']), 20)

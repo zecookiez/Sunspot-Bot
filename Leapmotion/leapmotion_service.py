@@ -22,11 +22,6 @@ class EventListener(Leap.Listener):
 
         global positions
 
-        """
-        :param controller:
-        :return [veloc_x, veloc_y]:
-        """
-
         frame = controller.frame()
 
         THRESHOLD_X = 7.0

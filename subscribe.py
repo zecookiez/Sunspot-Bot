@@ -32,7 +32,7 @@ def onMessage(client, userdata, message):
         arduino.write("TAKEOVER ")
  
  
-connections='./solace.cloud'
+connections='/home/pi/Sunspot-Bot/solace.cloud'
 connection_args = {}
 with open(connections, "r") as f:
     for line in f:

@@ -30,10 +30,16 @@ class EventListener(Leap.Listener):
         """
 
         frame = controller.frame()
+        
+        """For Sitting Down Purposes Use:
+        THRESHOLD_X = 200
+        NORTH_THRESH = -200
+        SOUTH_THRESH = 200"""
+        
 
-        THRESHOLD_X  = 450.0
-        NORTH_THRESH = -500.0
-        SOUTH_THRESH = 800.0
+        THRESHOLD_X  = 300.0
+        NORTH_THRESH = -200.0
+        SOUTH_THRESH = 500.0
 
         for current_hand in frame.hands:
 
@@ -44,7 +50,7 @@ class EventListener(Leap.Listener):
             break
 
         else:
-            
+
             if len(positions) < 2:
                 return
 
@@ -55,9 +61,9 @@ class EventListener(Leap.Listener):
             positions = list(zip(*positions))
 
             avg_vx = get_average(positions[0])
-            avg_vy = get_average(positions[1])
             avg_vz = get_average(positions[2])
-            
+
+            print avg_vx, avg_vz
 
             positions = []
 
@@ -72,6 +78,8 @@ class EventListener(Leap.Listener):
                 else:
                     # East
                     direction = "E"
+                    avg_vz = 0
+
             elif avg_vx < -THRESHOLD_X:
                 if avg_vz < NORTH_THRESH - 100.0:
                     # North West
@@ -82,15 +90,22 @@ class EventListener(Leap.Listener):
                 else:
                     # West
                     direction = "W"
+                    avg_vz = 0
             else:
                 if avg_vz < NORTH_THRESH:
                     # North
                     direction = "N"
+                    avg_vx = 0
+
                 elif avg_vz > SOUTH_THRESH:
                     # South
                     direction = "S"
+                    avg_vx = 0
 
-            self.send_data(direction, avg_vx, avg_vy)
+            avg_vx = min(255, int(abs(avg_vx) * 255 / 1800))
+            avg_vz = min(255, int(abs(avg_vz) * 255 / 1000))
+
+            self.send_data(direction, avg_vx, avg_vz)
 
     def onConnect(client, userdata, flags, rc):
         print ("connected.")
@@ -120,15 +135,15 @@ class EventListener(Leap.Listener):
                 connection_args[key] = val
 
         client.username_pw_set(connection_args['username'], password=connection_args['password'])
-        client.connect(connection_args['url'], int(connection_args
+        client.connect(connection_args['url'], int(connection_args['port']), 20)
         # Use this to send data
         direction = direction + " "
-        client.on_publish("leapmotion/direction", direction);
+        client.on_publish("leapmotion/direction", direction)
 
 def main():
 
     # START
-
+    
     # Create a sample listener and controller
     listener = EventListener()
     controller = Leap.Controller()

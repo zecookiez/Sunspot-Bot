@@ -25,9 +25,9 @@ with open(connections, "r") as f:
 
 client = mqtt.Client(transport="websockets")
 client.tls_set(ca_certs=None, certfile=None, keyfile=None, cert_reqs=ssl.CERT_REQUIRED, tls_version=ssl.PROTOCOL_TLS, ciphers=None)
-client.on_connect = print("connected.")
-client.on_disconnect = print('disconnected!')
-client.on_message = print('got message: ' + str(message.payload))
+client.on_connect = onConnect
+client.on_disconnect = onDisconnect
+client.on_message = onMessage
 
 client.username_pw_set(connection_args['username'], password=connection_args['password'])
 client.connect(connection_args['url'], int(connection_args['port']), 20)
@@ -37,8 +37,8 @@ client.connect(connection_args['url'], int(connection_args['port']), 20)
 client.on_publish = onPublish("test")
 client.on_publish = onPublish("test1")
 client.on_publish = onPublish("test2")
-client.on_publish = onPublish("test3")
-# 	client.on_message = onMessage
+client.on_publish = onPublish("test")
+# client.on_message = onMessage
 
 
 client.loop_forever()
